@@ -90,3 +90,22 @@ You assign a program to a tag with: Win + shift + tag number.
 Well, keep that in mind: That those little numbers are not desktops, but tags. They don't have to be numbers either, but out of the box are only configured via keyboard from 1 to 9 (and only show 5). You can probably program it so other combinations correspond to more tags/screens.
 
 **Multiscreen:** I would have loved to investigate multiscreen. I'm sure you can create different bars on different screens and assign tags to specific monitors and stuff. I know there is a key combination to move apps to screens but I don't know what tag it goes to. Or if you consider both monitors  part of a big layout that shows a tag.
+
+## Screenshots
+
+![Archblue1](/screenshots/scr-archblue1.jpg "Archblue1")
+
+![Archblue2](/screenshots/scr-archblue2.jpg "Archblue2")
+
+![Orangey1](/screenshots/scr-orangey1.jpg "Orangey1")
+
+![Orangey2](/screenshots/scr-orangey2.jpg "Orangey2")
+
+
+
+
+
+
+
+
+
