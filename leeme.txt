@@ -1,0 +1,138 @@
+
+ Instrucciones iniciales
+
+ 1 - Poner todo esto dentro dentro de directorio
+    (crearlo si no existe)
+
+     ~/.config/awesome
+  
+ 2 - COPIAR (no mover) fox-rc.lua -> rc.lua
+ 
+     ¿Por qué? rc.lua es el archivo que awesome
+     lee por defecto al arrancar, así tienes copia
+     si lo machacas, y tampoco machacas si ya había uno.
+  
+ 3 - Dentro del rc.lua hay bastantes instrucciones
+     mías para saber qué toquetear inicialmente.
+	 
+	 LEELOS. Son las verdaderas instrucciones para
+             poder configurarlo a tu gusto.
+			 Seguramente no te funcione todo out of
+			 the box, tendrás que instalar cosas
+			 o cambiarlas por las que tú quieras.
+	 
+	 Por ejemplo donde poner el kitty, que paquetes
+	 instalar, cómo elegir el theme (hay dos), etc.
+	 
+ 4 - No pude probar multi-monitor pq no me funcionó en
+     Virtualbox
+  
+ 5 - PICOM. Importante el PICOM. Es el "compositor",
+     se encarga de transparencias y también del VSYNC.
+	 Como no lo tengas, los vídeos les da el corte ese.
+	 
+	 PERO... da problemas en virtualbox. Conque.. si vas
+	 a instalar awesome en virtualbox, no instales el picom
+	 pero sí hazlo en tu PC de verdad.
+	 
+ Yo te recomiendo instalar awesome en tu PC de verdad.
+ 
+  
+ Acerca del entorno, mini tutorial de AwesomeWM:
+ ----------------------------------------------
+
+ Awesome es un window manager.. no es un Desktop environment.
+ Puedes seguir usando todas tus mierdas que vinieron con plasma-kde.
+	 
+ Además, seguirías usando sus icon themes, cursor themes y
+ configuraciones de GTK y QT que tengas.
+ 
+  A: Combinaciones de teclas obligatorias saber:
+ 
+    win + enter: Abre Terminal (terminator)
+	 
+	win + espacio: Esconde la barra
+	 
+	win + r: Run. En este caso abre Rofi.
+	 
+	win + e: explorador de archivos (Thunar)
+	 
+	win + b: Web (B)rowser (Firefox)
+	 
+	Hay tropecientas combinaciones de teclas...
+	 
+	win + s: lanza popup con un listado de ellas,
+	          pero creo mejor darle repaso al rc.lua
+ 
+    Todas las apps ya eliges tú si quieres el
+    chrome, kitty, etc. en el rc.lua
+ 
+ 
+  B :Mi meta inicial era simplemente usar algo como el i3, pero
+     eché en falta un par de cosas:
+ 
+    1 - Más "ratonéo". Quería cerrar ventanas o "flotarlas" sin
+    tener que estar recordando combinaciones de teclas.
+	
+	Aún así, todo se puede hacer con teclado. Awesome es
+	awesome, tiene todo.
+	
+	También mola no tener barra para poder tener el maximum
+    real estate. Hay botoncillos semi escondidos, hechos
+	cutremente por mi.
+     CERRAR:         arriba a la derecha,
+	 (Des)MAXIMIZAR: justo al lado
+	 (Des)FLOTAR:    a la izquierda
+
+    Están un poco invisibles pero se "encienden" al pasar
+	cursor por encima. Si están en modo "maximizado" o "flotando"
+    se mantienen "encendidos" con un leve colorcillo gris.
+
+    MINIMIZAR: En los entornos estos no se minimiza!! Pero se
+    puede. O con combinación de teclas, o pulsando en la barra
+	de tareas	
+	
+	Si picas barra de ventana puedes MOVER arrastrando la ventana de sitio.
+	
+	Para REDIMENSIONAR... pica con botón alternativo de ratón y arrastra.
+	Es un poco raro. No me mola demasiado. No lo inventé yo.
+	
+	En mi afán del máximo real estate, el título de la ventana no tiene
+	el nombre de la aplicación. Estará en la barra de tareas. Se le puede poner
+	aunque tendrías que hacer más alta la barra de la ventana. Lo tengo comentado
+	
+    2 - Diferentes modos layout. i3 es "manual".. tú tienes que
+    elegir donde van las ventanas, es un poco tocapelotas,
+	Con Awesome eliges el layout que quieres (en mi rc.lua sólo tengo
+	activado 3), incluso que sea todo flotante omo estamos acostumbrados.
+	
+  C: Themes. Los themes los hice yo, pero son para romperlos. Creo que
+     son fáciles de seguir para poder toquetearlos a tu gusto. Creeme que
+	 no es fácil entender el lua de los huevos y la forma que tiene la peña
+	 de colocar los elementos dentro de los objetos. He procurado dejarlo
+	 fácil de toquetear. Comentarios por un tubo diciendo "toca esto aquí"
+	
+     Pues eso, hay dos themes en dos directorios que son prácticamente
+	 iguales aunque no lo parezcan, sólo cambian colorines y "márgenes", etc.
+	 
+  D: Los tags. Los tags son los "escritorios". Los escritorios son una ilusión.
+     Asignas programas a "tags" 1,2,3,4,5 (y puedes crear más dinámicamente)
+	 y luego muestras o escondes tags, e incluso los puedes combinar y mostrar
+	 varios a la vez
+     
+	 Para asignar un programa a tag es: Win + número del tag.
+	 
+	 Me hubiese molado investigar multipantalla. Estoy seguro que puedes crear
+	 barras diferentes en diferentes pantallas y asignarle tags a monitores en
+	 concreto y esas cosas. Sé que hay combinación de teclas para cambiar ventana
+	 de pantalla, pero no sé a qué tag va a parar. O si se considera ambos monitores
+	 parte de un gran layout que muestra un tag. Ténlo en cuenta. Que esos numeritos
+	 no son escritorios, sino etiquetas. No tienen que ser números tampoco, pero
+	 out of the box sólo hay configurado del 1 al 9 (y sólo muestra 5). Probablemente
+	 puedes programar para que otras combinaciones correspondan a más tags.
+	 Nuevo tag creo que era win + n y te sale un prompt para que le asignes un nombre.
+	 
+ No se me ocurre más nada por ahora. Probablemente con un tutorial presencial aprendieses
+ más.
+	  
+	 
