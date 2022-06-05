@@ -406,340 +406,380 @@ local function foxKey(m, k, d, g, f)
     return awful.key (m, k, f, { group = g, description = d })
 end
 
--- FOX_INSTRUCTION 7 : KEYBINDINGS !!!
+function foxMakeKeys(gr,T)
+
+    local count = 0
+    for _ in pairs(T) do count = count + 1 end
+
+    local keys = {}
+
+    for i = 1, count do
+        keys = mytable.join(keys,
+            foxKey(T[i][1],T[i][2],T[i][3],gr,T[i][4]))
+    end
+
+    return keys
+end
+
+-- FOX_INSTRUCTION 6 : KEYBINDINGS !!!
 -- Important: Sound keys use pactl not amixer
 globalkeys = mytable.join(
 
-    foxKey(kCtr, "space",   "destroy all notifications", "hotkeys",
-     function()
+foxMakeKeys("hotkeys", {
+{
+    kCtr, "space", "destroy all notifications",
+    function()
         naughty.destroy_all_notifications()
-     end),
+    end
+},{
+    kC_A, "l", "lock screen",
+    function()
+        os.execute(scrlocker)
+    end
+},{
+    {  }, "XF86MonBrightnessUp", "Brightness +10%",   
+    function()
+        os.execute("xbacklight -inc 10")
+    end
+},{
+    {  }, "XF86MonBrightnessDown", "Brightness -10%", 
+    function()
+        os.execute("xbacklight -dec 10")
+    end
+},{
+    {  }, "XF86AudioRaiseVolume", "volume up",  
+    function()
+        os.execute("pactl set-sink-volume @DEFAULT_SINK@ +5%")
+        beautiful.volume.update()
+    end
+},{
+    {  }, "XF86AudioLowerVolume", "volume down", 
+    function()
+        os.execute("pactl set-sink-volume @DEFAULT_SINK@ -5%")
+        beautiful.volume.update()
+    end
+ },{
+    {  }, "XF86AudioMute", "toggle mute",  
+    function()
+        os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+        beautiful.volume.update()
+    end
+},{
+    kMod, "c", "copy terminal to gtk",  
+    function()
+         awful.spawn.with_shell("xsel | xsel -i -b")
+    end
+},{
+    
+    kMod, "v", "copy gtk to terminal",  
+    function()
+        awful.spawn.with_shell("xsel -b | xsel")
+    end
+}}),
 
-    foxKey(kC_A, "l",       "lock screen", "hotkeys",
-     function() os.execute(scrlocker) end),
+foxMakeKeys("awesome",{
+{
+    kMod, "s",     "show help",
+    hotkeys_popup.show_help
+},{
+    kMod, "w",     "show main menu",
+    function () awful.util.mymainmenu:show() end
+},{
+    kMod, "space", "toggle wibox",
+    function ()
+       for s in screen do
+           s.mywibox.visible = not s.mywibox.visible
+           if s.mybottomwibox then
+               s.mybottomwibox.visible = not s.mybottomwibox.visible
+           end
+       end
+    end
+},{
+    kC_M, "r", "reload awesome",
+    awesome.restart
+},{
+    kM_S, "q",  "quit awesome",
+    awesome.quit
+},{
+    kMod, "x", "lua execute prompt",
+    function ()
+        awful.prompt.run {
+            prompt       = "Run Lua code: ",
+            textbox      = awful.screen.focused().mypromptbox.widget,
+            exe_callback = awful.util.eval,
+            history_path = awful.util.get_cache_dir() .. "/history_eval"
+        }
+    end
+}}),
 
-    -- Show help
-    foxKey(kMod, "s",       "show help", "awesome",
-     hotkeys_popup.show_help),
+foxMakeKeys("tag", {
+{
+    kMod, "Left",  "view previous",
+     awful.tag.viewprev
+},{
+    kMod, "Right", "view next",
+    awful.tag.viewnext
+},{
+    kMod, "Escape","go back",
+    awful.tag.history.restore
+},{
+    kAlt, "Left",  "view previous nonempty",
+    function() lain.util.tag_view_nonempty(-1) end
+},{
+    kAlt, "Right", "view previous nonempty",
+    function() lain.util.tag_view_nonempty(1) end
+},{
+    kC_A, "+",     "increment useless gaps",
+    function() lain.util.useless_gaps_resize(1) end
+},{
+    kC_A, "-",     "decrement useless gaps",
+    function() lain.util.useless_gaps_resize(-1) end
+},{
+    kM_S, "n",     "add new tag",
+    function() lain.util.add_tag()    end
+},{
+    kM_S, "r",     "rename tag",
+    function() lain.util.rename_tag() end
+},{
+    kM_S, "Left",  "move tag to the left",
+    function() lain.util.move_tag(-1) end
+},{
+    kM_S, "Right", "move tag to the right",
+    function() lain.util.move_tag(1)  end
+},{
+    kM_S, "d",     "delete tag",
+    function() lain.util.delete_tag() end
+}}),
 
-    -- Tag browsing
-    foxKey(kMod, "Left",    "view previous", "tag",
-     awful.tag.viewprev),
-
-    foxKey(kMod, "Right",   "view next", "tag",
-     awful.tag.viewnext),
-
-    foxKey(kMod, "Escape",  "go back", "tag",
-     awful.tag.history.restore),
-
-    -- Non-empty tag browsing
-    foxKey(kAlt, "Left",    "view previous nonempty",  "tag",
-       function() lain.util.tag_view_nonempty(-1) end),
-
-    foxKey(kAlt, "Right",   "view previous nonempty",  "tag",
-       function() lain.util.tag_view_nonempty(1) end),
-
-
-    -- Default client focus
-    foxKey(kAlt, "j",      "focus next by index",     "client",
-        function() awful.client.focus.byidx(1) end),
-
-    foxKey(kAlt, "k",      "focus previous by index", "client",
-        function() awful.client.focus.byidx(-1) end),
-
-    -- By-direction client focus
-    foxKey(kMod, "j",      "focus down", "client",
-        function()
-            awful.client.focus.global_bydirection("down")
-            if client.focus then client.focus:raise() end
-        end),
-
-    foxKey(kMod, "k",    "focus up", "client",
-        function()
-            awful.client.focus.global_bydirection("up")
-            if client.focus then client.focus:raise() end
-        end),
-
-    foxKey(kMod, "h",    "focus left", "client",
-        function()
-            awful.client.focus.global_bydirection("left")
-            if client.focus then client.focus:raise() end
-        end),
-
-    foxKey(kMod, "l",    "focus right", "client",
-        function()
-            awful.client.focus.global_bydirection("right")
-            if client.focus then client.focus:raise() end
-        end),
-
-    -- Menu
-    foxKey(kMod, "w",    "show main menu", "awesome",
-        function () awful.util.mymainmenu:show() end),
-
+foxMakeKeys("client", {
+{
+    kAlt, "j", "focus next by index",
+    function() awful.client.focus.byidx(1) end
+},{
+    kAlt, "k", "focus previous by index",
+    function() awful.client.focus.byidx(-1) end
+},{
+    kMod, "j", "focus down",
+    function()
+        awful.client.focus.global_bydirection("down")
+        if client.focus then client.focus:raise() end
+    end
+},{
+    kMod, "k", "focus up",
+    function()
+        awful.client.focus.global_bydirection("up")
+        if client.focus then client.focus:raise() end
+    end
+},{
+    kMod, "h", "focus left",
+    function()
+        awful.client.focus.global_bydirection("left")
+        if client.focus then client.focus:raise() end
+    end
+},{
+    kMod, "l", "focus right",
+    function()
+        awful.client.focus.global_bydirection("right")
+        if client.focus then client.focus:raise() end
+    end
+},{
     -- Layout manipulation
-    foxKey(kM_S, "j",  "swap with next client by index", "client",
-        function() awful.client.swap.byidx(  1)    end),
-
-    foxKey(kM_S, "k",  "swap with previous client by index", "client",
-        function() awful.client.swap.byidx( -1)    end),
-
-    foxKey(kC_M, "j",  "focus the next screen", "screen",
-        function() awful.screen.focus_relative( 1) end),
-
-    foxKey(kC_M, "k",  "focus the previous screen", "screen",
-        function() awful.screen.focus_relative(-1) end),
-
-    foxKey(kMod, "u",  "jump to urgent client", "client",
-        awful.client.urgent.jumpto),
-
-    foxKey(kMod, "Tab","cycle with previous/go back", "client",
-        function ()
-            if cycle_prev then
-                awful.client.focus.history.previous()
-            else
-                awful.client.focus.byidx(-1)
-            end
-            if client.focus then
-                client.focus:raise()
-            end
-        end),
-
-    foxKey(kMod, "space", "toggle wibox", "awesome",
-     function ()
-        for s in screen do
-            s.mywibox.visible = not s.mywibox.visible
-            if s.mybottomwibox then
-                s.mybottomwibox.visible = not s.mybottomwibox.visible
-            end
+    kM_S, "j",  "swap with next client by index",
+    function() awful.client.swap.byidx(  1) end
+},{
+    kM_S, "k",  "swap with previous client by index",
+        function() awful.client.swap.byidx( -1) end
+},{
+    kMod, "u",  "jump to urgent client",
+        awful.client.urgent.jumpto
+},{
+    kMod, "Tab","cycle with previous/go back",
+    function ()
+        if cycle_prev then
+            awful.client.focus.history.previous()
+        else
+            awful.client.focus.byidx(-1)
         end
-    end),
+        if client.focus then
+            client.focus:raise()
+        end
+    end
+},{
+    kC_M, "n", "restore minimized",
+    function ()
+        local c = awful.client.restore()
+        -- Focus restored client
+        if c then
+            c:emit_signal("request::activate", "key.unminimize", {raise = true})
+        end
+    end
+}}),
 
-    -- On-the-fly useless gaps change
-    foxKey(kC_A, "+",     "increment useless gaps",  "tag",
-        function () lain.util.useless_gaps_resize(1) end),
+foxMakeKeys("screen", {
+{
+    kC_M, "j",  "focus the next screen",
+    function() awful.screen.focus_relative( 1) end
+},{
+    kC_M, "k",  "focus the previous screen",
+    function() awful.screen.focus_relative(-1) end
+}}),
 
-    foxKey(kC_A, "-",     "decrement useless gaps",  "tag",
-        function () lain.util.useless_gaps_resize(-1) end),
+foxMakeKeys("launcher", {
+{
+    kMod, "Return", "Open a terminal",
+    function() awful.spawn(terminal) end
+},{
+    {  },      "Print", "Screenshot",
+    function() awful.spawn("flameshot gui") end
+},{
+    kMod, "r", "App launcher/(R)unner/(R)ofi",
+    function() awful.spawn.with_shell(applauncher) end
+},{
+    kMod, "b", "Web browser",
+    function() awful.spawn.with_shell(webbrowser) end
+},{
+    kMod, "e", "File navigator",
+    function() awful.spawn.with_shell(filebrowser) end
+}
+-- Dropdown application (Fox says: Can't make it work)
+-- kMod, "z", "dropdown application",
+-- function() awful.screen.focused().quake:toggle() end
+}),
 
-    -- Dynamic tagging
-    foxKey(kM_S, "n",     "add new tag", "tag",
-        function() lain.util.add_tag()    end),
+foxMakeKeys("layout", {
+{
+    kM_A, "l", "increase master width factor",
+    function() awful.tag.incmwfact( 0.05) end
+},{
+    kM_A, "h", "decrease master width factor",
+    function() awful.tag.incmwfact(-0.05) end
+},{
+    kM_S, "h", "increase the number of master clients",
+    function() awful.tag.incnmaster( 1, nil, true) end
+},{
+    kM_S, "l", "decrease the number of master clients",
+    function() awful.tag.incnmaster(-1, nil, true) end
+},{
+    kC_M, "h", "increase the number of columns",
+    function() awful.tag.incncol( 1, nil, true) end
+},{
+    kC_M, "l", "decrease the number of columns",
+    function() awful.tag.incncol(-1, nil, true) end
+}}),
 
-    foxKey(kM_S, "r",     "rename tag", "tag",
-        function() lain.util.rename_tag() end),
+foxMakeKeys("widgets", {
+{
+    kAlt, "c", "show calendar",
+    function()
+         if beautiful.cal then beautiful.cal.show(7) end
+    end
+}})
 
-    foxKey(kM_S, "Left",  "move tag to the left", "tag",
-        function() lain.util.move_tag(-1) end),
+) -- end globalkeys
+ 
 
-    foxKey(kM_S, "Right", "move tag to the right", "tag",
-        function() lain.util.move_tag(1)  end),
 
-    foxKey(kM_S, "d",     "delete tag", "tag",
-        function() lain.util.delete_tag() end),
-
-    -- Standard program
-    foxKey(kMod, "Return", "open a terminal",  "launcher",
-        function() awful.spawn(terminal) end),
-
-    foxKey(kC_M, "r", "reload awesome", "awesome",
-        awesome.restart),
-
-    foxKey(kM_S, "q", "quit awesome",   "awesome",
-        awesome.quit),
-
-    foxKey(kM_A, "l", "increase master width factor",  "layout",
-       function() awful.tag.incmwfact( 0.05) end),
-
-    foxKey(kM_A, "h", "decrease master width factor",  "layout",
-        function() awful.tag.incmwfact(-0.05) end),
-
-    foxKey(kM_S, "h", "increase the number of master clients", "layout",
-        function() awful.tag.incnmaster( 1, nil, true) end),
-
-    foxKey(kM_S, "l", "decrease the number of master clients", "layout",
-        function() awful.tag.incnmaster(-1, nil, true) end),
-
-    foxKey(kC_M, "h", "increase the number of columns",  "layout",
-        function() awful.tag.incncol( 1, nil, true) end),
-
-    foxKey(kC_M, "l", "decrease the number of columns",  "layout",
-        function() awful.tag.incncol(-1, nil, true) end),
-
-    foxKey({  }, "Print", "Screenshot", "launcher",
-        function() awful.spawn("flameshot gui") end ),
-
-    foxKey(kC_M, "n", "restore minimized",  "client",
-        function ()
-            local c = awful.client.restore()
-            -- Focus restored client
-            if c then
-                c:emit_signal("request::activate", "key.unminimize", {raise = true})
-            end
-        end),
-
-    -- Dropdown application (Fox says: Can't make it work)
-    -- foxKey(kMod, "z", "dropdown application",  "launcher",
-    -- function() awful.screen.focused().quake:toggle() end),
-
-    -- Widgets popups
-    foxKey(kAlt, "c", "show calendar",  "widgets",
-        function() if beautiful.cal then beautiful.cal.show(7) end end),
-
-    -- Screen brightness
-    foxKey({  }, "XF86MonBrightnessUp", "Brightness +10%",   "hotkeys",
-        function() os.execute("xbacklight -inc 10") end),
-
-    foxKey({  }, "XF86MonBrightnessDown", "Brightness -10%", "hotkeys",
-        function() os.execute("xbacklight -dec 10") end),
-
-    -- Volume control
-    foxKey({  }, "XF86AudioRaiseVolume", "volume up",  "hotkeys",
-        function()
-            os.execute("pactl set-sink-volume @DEFAULT_SINK@ +5%")
-            beautiful.volume.update()
-        end),
-
-    foxKey({  }, "XF86AudioLowerVolume", "volume down", "hotkeys",
-        function()
-            os.execute("pactl set-sink-volume @DEFAULT_SINK@ -5%")
-            beautiful.volume.update()
-        end),
-
-    foxKey({  }, "XF86AudioMute", "toggle mute",  "hotkeys",
-        function()
-            os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
-            beautiful.volume.update()
-        end),
-
-    -- Copy primary to clipboard (terminals to gtk)
-    foxKey(kMod, "c", "copy terminal to gtk",  "hotkeys",
-        function () awful.spawn.with_shell("xsel | xsel -i -b") end),
-
-    -- Copy clipboard to primary (gtk to terminals)
-    foxKey(kMod, "v", "copy gtk to terminal",  "hotkeys",
-        function () awful.spawn.with_shell("xsel -b | xsel") end),
-
-    -- App launcher
-    foxKey(kMod, "r", "App launcher/(R)unner", "Launcher",
-        function() awful.spawn.with_shell(applauncher) end),
-
-    -- web Browser
-    foxKey(kMod, "b",     "Web browser",  "launcher",
-        function () awful.spawn.with_shell(webbrowser) end),
-
-    -- file Browser
-    foxKey(kMod, "e",     "File navigator",  "launcher",
-        function () awful.spawn.with_shell(filebrowser) end),
-
-    foxKey(kMod, "x", "lua execute prompt",  "awesome",
-        function ()
-            awful.prompt.run {
-                prompt       = "Run Lua code: ",
-                textbox      = awful.screen.focused().mypromptbox.widget,
-                exe_callback = awful.util.eval,
-                history_path = awful.util.get_cache_dir() .. "/history_eval"
-            }
-        end)
-)
-
--- FOX_INSTRUCTION 8 : Client (window) keybindings
+-- FOX_INSTRUCTION 7 : Client (window) keybindings
 --
-clientkeys = mytable.join(
+clientkeys =
+foxMakeKeys("client", {
+{
+    kA_S, "m", "magnify client",  
+    lain.util.magnify_client
+},{
+    kMod, "f", "toggle fullscreen",
+    function(c)
+        c.fullscreen = not c.fullscreen
+        c:raise()
+    end
+},{
+    kM_S, "c", "close",
+    function(c) c:kill() end
+},{
+    kC_M, "space", "toggle floating",
+    awful.client.floating.toggle
+},{
+    kC_M, "Return", "move to master",
+    function(c) c:swap(awful.client.getmaster()) end
+},{
+    kMod, "o", "move to screen",
+    function(c) c:move_to_screen() end
+},{
+--  kMod, "t", "toggle keep on top",  "client",
+--  function(c) c.ontop = not c.ontop end),
+  
+    kMod, "t", "Show/Hide Titlebars",
+    awful.titlebar.toggle
+},{
+    kMod, "n", "minimize",
+    function(c)
+        -- The client currently has the input focus, so it cannot be
+        -- minimized, since minimized clients can't have the focus.
+        c.minimized = true
+    end 
+},{
+    kMod, "m", "(un)maximize",
+    function(c)
+        c.maximized = not c.maximized
+        c:raise()
+    end
+},{
+    kC_M, "m", "(un)maximize vertically",
+    function(c)
+        c.maximized_vertical = not c.maximized_vertical
+        c:raise()
+    end
+},{
+    kM_S, "m", "(un)maximize horizontally",
+    function(c)
+        c.maximized_horizontal = not c.maximized_horizontal
+        c:raise()
+    end
+}})
 
-    foxKey(kA_S, "m",  "magnify client",  "client",
-        lain.util.magnify_client),
 
-    foxKey(kMod, "f",  "toggle fullscreen",  "client",
-        function (c)
-            c.fullscreen = not c.fullscreen
-            c:raise()
-        end),
-
-    foxKey(kM_S, "c",      "close",  "client",
-        function (c) c:kill() end),
-
-    foxKey(kC_M, "space",  "toggle floating",  "client",
-        awful.client.floating.toggle),
-
-    foxKey(kC_M, "Return", "move to master",  "client",
-        function (c) c:swap(awful.client.getmaster()) end),
-
-    foxKey(kMod, "o",      "move to screen",  "client",
-        function (c) c:move_to_screen() end),
-
-    foxKey(kMod, "t",      "toggle keep on top",  "client",
-        function (c) c.ontop = not c.ontop end),
-
-    foxKey(kMod, "n",      "minimize",  "client",
-        function (c)
-            -- The client currently has the input focus, so it cannot be
-            -- minimized, since minimized clients can't have the focus.
-            c.minimized = true
-        end ),
-
-    foxKey(kMod, "m",      "(un)maximize",  "client",
-        function (c)
-            c.maximized = not c.maximized
-            c:raise()
-        end),
-
-    foxKey(kC_M, "m",      "(un)maximize vertically",  "client",
-        function (c)
-            c.maximized_vertical = not c.maximized_vertical
-            c:raise()
-        end),
-
-    foxKey(kM_S, "m",      "(un)maximize horizontally",  "client",
-        function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c:raise()
-        end)
-)
 
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it work on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
 for i = 1, 9 do
 
-    globalkeys = mytable.join(
+    globalkeys = mytable.join(globalkeys,
 
-        globalkeys,
-
-        -- View tag only.
-        foxKey(kMod, "#" .. i + 9, "view tag #"..i, "tag",
+        foxMakeKeys("tag",{
+        {
+            kMod, "#" .. i + 9, "view tag #"..i, 
             function ()
                 local screen = awful.screen.focused()
                 local tag    = screen.tags[i]
                 if tag then tag:view_only() end
-            end),
-
-        -- Toggle tag display.
-        foxKey(kC_M, "#" .. i + 9, "toggle tag #" .. i, "tag",
+            end
+        },{
+            kC_M, "#" .. i + 9, "toggle tag #" .. i, 
             function ()
                 local screen = awful.screen.focused()
                 local tag    = screen.tags[i]
                 if tag then awful.tag.viewtoggle(tag) end
-            end),
-
-        -- Move client to tag.
-        foxKey(kM_S, "#" .. i + 9, "move focused client to tag #"..i, "tag",
+            end
+        },{
+            kM_S, "#" .. i + 9, "move focused client to tag #"..i,
             function ()
                 if client.focus then
                     local tag = client.focus.screen.tags[i]
                     if tag then client.focus:move_to_tag(tag) end
                 end
-            end),
-
-        -- Toggle tag on focused client.
-        foxKey({ modkey, "Control", "Shift" }, "#" .. i + 9, "toggle focused client on tag #" .. i,  "tag",
+            end
+        },{
+            { modkey, "Control", "Shift" }, "#" .. i + 9, "toggle focused client on tag #" .. i,
             function ()
                 if client.focus then
                     local tag = client.focus.screen.tags[i]
                     if tag then client.focus:toggle_tag(tag) end
                 end
-            end)
+            end
+        }})
     )
-end
+end -- for
 
 
 -- Client MOUSE bindings. When floating over titlebar
@@ -766,7 +806,7 @@ root.keys(globalkeys)
 
 -- {{{ Rules
 
--- FOX_INSTRUCTION 9 : Mainly forces certain apps to open floating
+-- FOX_INSTRUCTION 8 : Mainly forces certain apps to open floating
 --                     Last fox instruction. After this, check THEME file
 
 -- Rules to apply to new clients (through the "manage" signal).
