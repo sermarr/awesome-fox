@@ -421,7 +421,7 @@ function foxMakeKeys(gr,T)
     return keys
 end
 
--- FOX_INSTRUCTION 6 : KEYBINDINGS !!!
+-- FOX_INSTRUCTION 7 : KEYBINDINGS !!!
 -- Important: Sound keys use pactl not amixer
 globalkeys = mytable.join(
 
@@ -679,7 +679,7 @@ foxMakeKeys("widgets", {
  
 
 
--- FOX_INSTRUCTION 7 : Client (window) keybindings
+-- FOX_INSTRUCTION 8 : Client (window) keybindings
 --
 clientkeys =
 foxMakeKeys("client", {
@@ -806,7 +806,7 @@ root.keys(globalkeys)
 
 -- {{{ Rules
 
--- FOX_INSTRUCTION 8 : Mainly forces certain apps to open floating
+-- FOX_INSTRUCTION 9 : Mainly forces certain apps to open floating
 --                     Last fox instruction. After this, check THEME file
 
 -- Rules to apply to new clients (through the "manage" signal).
