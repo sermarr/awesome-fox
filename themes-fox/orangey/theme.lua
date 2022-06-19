@@ -29,11 +29,8 @@ end
 
 -- THEME
 --
--- FOX_INSTRUCTION 1 : Check this theme file is in this dir,
---                     especially if you clone it somewhere else
---
 local theme         = {}
-theme.dir           = os.getenv("HOME") .. "/.config/awesome/themes-fox/orangey"
+theme.dir           = awful.util.theme_dir -- set in rc.lua
 
 -- Beautiful variables
 --
@@ -129,11 +126,11 @@ local myMenu =
 {
     --MENU CONTAINER
     widget = wibox.container.background,
-	bg     = bar_cell_bg_color,
+    bg     = bar_cell_bg_color,
     shape  = round_rect_8,
     {
         widget  = wibox.container.margin,
-		margins = dpi(6),
+        margins = dpi(6),
         awful.widget.button({ image = theme.distro_icon })
     },
     buttons = awful.util.table.join(
@@ -455,6 +452,7 @@ local myCpu =
     shape = round_rect_8,
     {
         widget = wibox.container.margin,
+
         margins = dpi(11),
         {
            layout = wibox.layout.fixed.horizontal,
@@ -547,15 +545,15 @@ function theme.at_screen_connect(s)
             id     = "background_role",
             widget = wibox.container.background,
             {
-                widget = wibox.container.margin,
                 left  = dpi(10),
                 right = dpi(10),
+                widget = wibox.container.margin,
                 {
-                    layout = wibox.layout.fixed.horizontal,
                     spacing = dpi(8),
+                    layout = wibox.layout.fixed.horizontal,
                     {
-                        widget  = wibox.container.margin,
                         top = dpi(8), bottom = dpi(8),
+                        widget  = wibox.container.margin,
                         {
                             id     = "icon_role",
                             widget = wibox.widget.imagebox

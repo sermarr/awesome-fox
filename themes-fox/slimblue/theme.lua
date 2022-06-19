@@ -1,5 +1,5 @@
 --[[
-    FOX ArchBlue
+    FOX slimblue
 
     Search for FOX_INSTRUCTION in this file
     for quick links to common configurations
@@ -24,20 +24,26 @@ local os = os
 local my_table = awful.util.table or gears.table -- 4.{0,1} compatibility
 
 local round_rect_8 = function(cr, w, h)
-    gears.shape.rounded_rect(cr, w, h, dpi(8))
+    gears.shape.rounded_rect(cr, w, h, dpi(4))
 end
 
+local markup     = lain.util.markup
+local separators = lain.util.separators
+
+--
 -- THEME
 --
 local theme         = {}
 theme.dir           = awful.util.theme_dir -- set in rc.lua
 
+
+--
 -- Beautiful variables
 --
--- FOX_INSTRUCTION 2 : Main Font and Wallpaper
+-- FOX_INSTRUCTION : Main Font and Wallpaper
 --
 theme.font          = "JetBrains Mono Light 10"
-theme.wallpaper     = theme.dir .. "/wallpaper/archblue.png"
+theme.wallpaper     = gears.wallpaper.set("#003264") 
 
 theme.awesome_icon  = theme.dir .. "/icons/menu/awesome.png"
 
@@ -55,10 +61,27 @@ theme.fg_urgent     = "#CC9393"
 theme.bg_urgent     = "#2A1F1E"
 
 
+local white      = theme.fg_focus
+local gray       = "#858585"
+
+--]]
+
+--
 -- WIBAR
 --
-local bar_bg_color      = "#0000003F"
-local bar_cell_bg_color = "#192123"
+local bar_position                = "top"
+local bar_height                  = dpi(32)
+local bar_bg_color                = "#00000000"
+local bar_cell_bg_color           = "#191113" --"#192123"
+local bar_widget_spacing          = dpi(1)
+local bar_container_margin_top    = dpi(0) --theme.useless_gap, --doesn't refresh
+local bar_container_margin_left   = dpi(0) --theme.useless_gap, --doesn't refresh
+local bar_container_margin_right  = dpi(0) --theme.useless_gap, --doesn't refresh
+local bar_container_margin_bottom = dpi(0)
+local bar_inner_margin_top        = dpi(1) 
+local bar_inner_margin_left       = dpi(1) 
+local bar_inner_margin_right      = dpi(1) 
+local bar_inner_margin_bottom     = dpi(0)
 
 --
 theme.wibar_opacity = 1      -- between 0 and 1.
@@ -78,36 +101,10 @@ theme.wibar_bg = "#00000000" -- Transparent. Wibar isn't the bar you see
 --theme.wibar_shape 	    The wibar’s shape.
 
 
--- TAGLIST
+--]]
+
+
 --
-awful.util.tagnames              = { "1", "2", "3", "4", "5" }
-
-local taglist_selected_color     = "#0098ff" -- <blue. #FE5000 <orange
-local taglist_unselected_color   = "#555555" -- grey
-
--- FOX INSTRUCTION 3 : TAGLIST FONT
-theme.taglist_font               = "JetBrains Mono Bold 10"
-
-theme.taglist_shape              = gears.shape.circle       -- The main shape used for the elements.
-theme.taglist_shape_border_width = dpi(2)                   -- The shape elements border width.
-theme.taglist_shape_border_color = taglist_unselected_color -- The elements shape border color.
-
--- Default (Empty)
-theme.taglist_shape_border_color_empty = taglist_unselected_color
-theme.taglist_fg_empty                 = taglist_unselected_color
-theme.taglist_bg_empty                 = bar_bg_color
-
--- Occupied
-theme.taglist_shape_border_color       = taglist_selected_color
-theme.taglist_fg_occupied              = "#777777"
-theme.taglist_bg_occupied              = bar_bg_color
-
--- Focused
-theme.taglist_shape_border_color_focus = taglist_selected_color
-theme.taglist_fg_focus                 = "#000000"
-theme.taglist_bg_focus                 = taglist_selected_color
-
-
 -- MENU
 --
 theme.distro_icon                      = theme.dir .. "/icons/wibar/arch.svg"
@@ -145,9 +142,49 @@ local myMenu =
 }
 
 
--- LAYOUT
+
+--
+-- TAGLIST
+--
+awful.util.tagnames              = { "1", "2", "3", "4", "5" }
+
+local taglist_selected_color     = "#0098ff" -- <blue. #FE5000 <orange
+local taglist_unselected_color   = "#555555" -- grey
+
+local taglist_spacing            = dpi(4)
+local taglist_text_margins       = dpi(7)
+
+-- FOX INSTRUCTION 3 : TAGLIST FONT
+theme.taglist_font               = "JetBrains Mono Bold 8"
+
+theme.taglist_shape              = gears.shape.circle       -- The main shape used for the elements.
+theme.taglist_shape_border_width = dpi(2)                   -- The shape elements border width.
+theme.taglist_shape_border_color = taglist_unselected_color -- The elements shape border color.
+
+-- Default (Empty)
+theme.taglist_shape_border_color_empty = taglist_unselected_color
+theme.taglist_fg_empty                 = taglist_unselected_color
+theme.taglist_bg_empty                 = bar_bg_color
+
+-- Occupied
+theme.taglist_shape_border_color       = taglist_selected_color
+theme.taglist_fg_occupied              = "#777777"
+theme.taglist_bg_occupied              = bar_bg_color
+
+-- Focused
+theme.taglist_shape_border_color_focus = taglist_selected_color
+theme.taglist_fg_focus                 = "#000000"
+theme.taglist_bg_focus                 = taglist_selected_color
+
+
+local taglist_layout_spacing = dpi(5) 
+
+
+--
+-- LAYOUT button
 --
 local layoutDir = theme.dir .. "/icons/wibar/layout/"
+local layout_button_margins = dpi(7)
 
 theme.layout_tile       = layoutDir .. "tile.svg"
 theme.layout_tileleft   = layoutDir .. "tile_left.svg"
@@ -163,8 +200,17 @@ theme.layout_magnifier  = layoutDir .. "magnifier.svg"
 theme.layout_floating   = layoutDir .. "floating.svg"
 
 
+
+--
 -- TASKLIST
 --
+
+local tasklist_margin_left         = dpi(10)
+local tasklist_margin_right        = dpi(10)
+local tasklist_inner_spacing       = dpi(8)
+local tasklist_icon_spacing_top    = dpi(8)
+local tasklist_icon_spacing_bottom = dpi(8)
+
 --theme.tasklist_fg_normal 	The default foreground (text) color.
 theme.tasklist_bg_normal = bar_cell_bg_color --	The default background color.
 --theme.tasklist_fg_focus  = bar_cell_bg_color --	The focused client foreground (text) color.
@@ -185,7 +231,7 @@ theme.tasklist_plain_task_name = true -- 	Disable the extra tasklist client prop
 --theme.tasklist_font_focus 	The focused client title alignment.
 --theme.tasklist_font_minimized 	The minimized clients font.
 --theme.tasklist_font_urgent 	The urgent clients font.
-theme.tasklist_spacing = dpi(6) -- The space between the tasklist elements.
+theme.tasklist_spacing = dpi(1) -- The space between the tasklist elements.
 --theme.tasklist_shape = round_rect_8 -- 	The default tasklist elements shape.
 --theme.tasklist_shape_border_width = dpi(1) -- 	The default tasklist elements border width.
 --theme.tasklist_shape_border_color = "#aaaaaa" -- 	The default tasklist elements border color.
@@ -200,9 +246,11 @@ theme.tasklist_spacing = dpi(6) -- The space between the tasklist elements.
 --theme.tasklist_shape_border_color_urgent 	The urgent clients border color.
 
 theme.tasklist_fox_menu_width  = dpi(512)
-theme.tasklist_fox_menu_height = dpi(48)
+theme.tasklist_fox_menu_height = dpi(32)
+--]]
 
 
+--
 -- SYSTRAY
 --
 theme.systray_icon_spacing = dpi(8)
@@ -219,24 +267,190 @@ local mySysTray =
         wibox.widget.systray()
     }
 }
+--]]
 
+--
 -- KEYBOARD
 --
-local myKeyboard =
+--local myKeyboard =
+--{
+--    widget = wibox.container.background,
+--    bg     = bar_cell_bg_color,
+--    shape  = round_rect_8,
+--    {
+--        widget  = wibox.container.margin,
+--        margins = dpi(6),
+--        awful.widget.keyboardlayout()
+--    }
+--}
+
+
+
+--
+-- CPU
+--
+theme.cpu_ok = theme.dir .. "/icons/wibar/cpu.svg"
+theme.cpu_33 = theme.dir .. "/icons/wibar/cpu-orange.svg"
+theme.cpu_66 = theme.dir .. "/icons/wibar/cpu-red.svg"
+
+local imgCpu = wibox.widget.imagebox(theme.cpu_icon)
+
+theme.cpu = lain.widget.cpu({
+    settings = function()
+
+        if cpu_now.usage < 33 then
+            widget:set_markup(markup.font(theme.font, markup("#7F7F7F", string.format("%02d",cpu_now.usage))))
+            imgCpu:set_image(theme.cpu_ok)
+        elseif cpu_now.usage < 66 then
+            widget:set_markup(markup.font(theme.font, markup("#FF7F00", string.format("%02d",cpu_now.usage))))
+            imgCpu:set_image(theme.cpu_33)
+        else
+            widget:set_markup(markup.font(theme.font, markup("#FF0000", string.format("%02d",cpu_now.usage))))
+            imgCpu:set_image(theme.cpu_66)
+        end
+    end
+})
+
+local myCpu =
 {
     widget = wibox.container.background,
     bg     = bar_cell_bg_color,
-    shape  = round_rect_8,
+    shape = round_rect_8,
     {
-        widget  = wibox.container.margin,
-        margins = dpi(6),
-        awful.widget.keyboardlayout()
-    }
+        widget = wibox.container.margin,
+
+        margins = dpi(7),
+        {
+           layout = wibox.layout.fixed.horizontal,
+           spacing = dpi(6),
+           imgCpu,
+           theme.cpu
+        }
+    },
+    buttons = awful.util.table.join(
+        awful.button({}, 1, function() -- left click
+            awful.spawn("xterm btop")
+        end),
+        awful.button({}, 3, function() -- right click
+            awful.spawn("xterm nvtop")
+        end)
+    )
 }
 
+--]]
 
+
+
+--
+-- VOLUME
+--
+-- FOX INSTRUCTION 4 : USES "PULSE"AUDIO: lain.pulse, pavucontrol, pactl
+--                     Change to "ALSA" counterparts if using alsa.
+--
+theme.vol_low  = theme.dir .. "/icons/wibar/volume/volume-low.svg"
+theme.vol_norm = theme.dir .. "/icons/wibar/volume/volume-medium.svg"
+theme.vol_high = theme.dir .. "/icons/wibar/volume/volume-high.svg"
+theme.vol_mute = theme.dir .. "/icons/wibar/volume/volume-variant-off.svg"
+
+local imgVol = wibox.widget.imagebox(theme.vol_norm)
+
+theme.volume = lain.widget.pulse {
+
+    settings = function()
+
+        local volumen = tonumber(volume_now.left) or 0
+
+        if volume_now.muted ~= "yes" then
+
+            if volumen < 33 then
+                imgVol:set_image(theme.vol_low)
+            elseif volumen < 66 then
+                imgVol:set_image(theme.vol_norm)
+            else
+                imgVol:set_image(theme.vol_high)
+            end
+
+            widget:set_markup(lain.util.markup("#7493d2", volume_now.left))
+
+        else
+            imgVol:set_image(theme.vol_mute)
+            widget:set_text("X")
+        end
+
+    end
+}
+
+local myVolume =
+{
+    widget = wibox.container.background,
+    bg     = bar_cell_bg_color,
+    shape = round_rect_8,
+    {
+        widget = wibox.container.margin,
+        margins = dpi(8),
+        {
+            layout = wibox.layout.fixed.horizontal,
+            spacing = dpi(6),
+            imgVol,
+            theme.volume
+         }
+    },
+
+    buttons = awful.util.table.join(
+       --os.execute(string.format("pactl set-sink-mute %s toggle", theme.volume.device))
+       awful.button({}, 1, function() -- left click
+           awful.spawn("pavucontrol")
+       end),
+       awful.button({}, 2, function() -- middle click
+           os.execute("pactl set-sink-volume @DEFAULT_SINK@ 100%%")
+           theme.volume.update()
+       end),
+       awful.button({}, 3, function() -- right click
+           os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+           theme.volume.update()
+       end),
+       awful.button({}, 4, function() -- scroll up
+           os.execute("pactl set-sink-volume @DEFAULT_SINK@ +1%")
+           theme.volume.update()
+       end),
+       awful.button({}, 5, function() -- scroll down
+           os.execute("pactl set-sink-volume @DEFAULT_SINK@ -1%")
+           theme.volume.update()
+       end)
+    )
+}
+--]]
+
+
+
+--
+-- Textclock and Calendar
+--
+local mytextclock = wibox.widget.background()
+
+local pita_textclock = wibox.widget.textclock(
+ markup(gray, " %a") .. markup(white, " %d ") .. markup(gray, "%b ") ..  markup(white, "%H:%M ")
+)
+pita_textclock.font = theme.font
+
+mytextclock:set_widget(pita_textclock)
+mytextclock:set_bg(bar_cell_bg_color)
+mytextclock:set_shape(round_rect_8)
+
+theme.cal = lain.widget.cal({
+    attach_to = { mytextclock },
+    notification_preset = {
+        font = "JetBrains Mono Light 13",
+        fg   = white,
+        bg   = theme.bg_normal
+}})
+--]]
+
+
+
+--
 -- Client TITLEBAR
-
+--
 theme.titlebar_fox_height = dpi(10)
 
 local titleBarDir = theme.dir .. "/icons/titlebar/"
@@ -313,167 +527,11 @@ theme.titlebar_maximized_button_focus_inactive_hover  = titleBarDir .. "strip-ho
 --theme.titlebar_sticky_button_focus_inactive     = theme.dir .. "/icons/titlebar/sticky_focus_inactive.png"
 --theme.titlebar_sticky_button_focus_inactive_hover
 
-
-local markup     = lain.util.markup
-local separators = lain.util.separators
-local white      = theme.fg_focus
-local gray       = "#858585"
-
-
--- Textclock and Calendar
---
-local mytextclock = wibox.widget.background()
-
-local pita_textclock = wibox.widget.textclock(
- markup(gray, " %a") .. markup(white, " %d ") .. markup(gray, "%b ") ..  markup(white, "%H:%M ")
-)
-pita_textclock.font = theme.font
-
-mytextclock:set_widget(pita_textclock)
-mytextclock:set_bg(bar_cell_bg_color)
-mytextclock:set_shape(round_rect_8)
-
-theme.cal = lain.widget.cal({
-    attach_to = { mytextclock },
-    notification_preset = {
-        font = "JetBrains Mono Light 13",
-        fg   = white,
-        bg   = theme.bg_normal
-}})
-
-
--- VOLUME
---
--- FOX INSTRUCTION 4 : USES "PULSE"AUDIO: lain.pulse, pavucontrol, pactl
---                     Change to "ALSA" counterparts if using alsa.
---
-theme.vol_low  = theme.dir .. "/icons/wibar/volume/volume-low.svg"
-theme.vol_norm = theme.dir .. "/icons/wibar/volume/volume-medium.svg"
-theme.vol_high = theme.dir .. "/icons/wibar/volume/volume-high.svg"
-theme.vol_mute = theme.dir .. "/icons/wibar/volume/volume-variant-off.svg"
-
-local imgVol = wibox.widget.imagebox(theme.vol_norm)
-
-theme.volume = lain.widget.pulse {
-
-    settings = function()
-
-        local volumen = tonumber(volume_now.left) or 0
-
-        if volume_now.muted ~= "yes" then
-
-            if volumen < 33 then
-                imgVol:set_image(theme.vol_low)
-            elseif volumen < 66 then
-                imgVol:set_image(theme.vol_norm)
-            else
-                imgVol:set_image(theme.vol_high)
-            end
-
-            widget:set_markup(lain.util.markup("#7493d2", volume_now.left))
-
-        else
-            imgVol:set_image(theme.vol_mute)
-            widget:set_text("X")
-        end
-
-    end
-}
-
-
-local myVolume =
-{
-    widget = wibox.container.background,
-    bg     = bar_cell_bg_color,
-    shape = round_rect_8,
-    {
-        widget = wibox.container.margin,
-        margins = dpi(10),
-        {
-            layout = wibox.layout.fixed.horizontal,
-            spacing = dpi(6),
-            imgVol,
-            theme.volume
-         }
-    },
-
-    buttons = awful.util.table.join(
-       --os.execute(string.format("pactl set-sink-mute %s toggle", theme.volume.device))
-       awful.button({}, 1, function() -- left click
-           awful.spawn("pavucontrol")
-       end),
-       awful.button({}, 2, function() -- middle click
-           os.execute("pactl set-sink-volume @DEFAULT_SINK@ 100%%")
-           theme.volume.update()
-       end),
-       awful.button({}, 3, function() -- right click
-           os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
-           theme.volume.update()
-       end),
-       awful.button({}, 4, function() -- scroll up
-           os.execute("pactl set-sink-volume @DEFAULT_SINK@ +1%")
-           theme.volume.update()
-       end),
-       awful.button({}, 5, function() -- scroll down
-           os.execute("pactl set-sink-volume @DEFAULT_SINK@ -1%")
-           theme.volume.update()
-       end)
-    )
-}
-
-
--- CPU
---
-theme.cpu_ok = theme.dir .. "/icons/wibar/cpu.svg"
-theme.cpu_33 = theme.dir .. "/icons/wibar/cpu-orange.svg"
-theme.cpu_66 = theme.dir .. "/icons/wibar/cpu-red.svg"
-
-local imgCpu = wibox.widget.imagebox(theme.cpu_icon)
-
-theme.cpu = lain.widget.cpu({
-    settings = function()
-
-        if cpu_now.usage < 33 then
-            widget:set_markup(markup.font(theme.font, markup("#7F7F7F", string.format("%02d",cpu_now.usage))))
-            imgCpu:set_image(theme.cpu_ok)
-        elseif cpu_now.usage < 66 then
-            widget:set_markup(markup.font(theme.font, markup("#FF7F00", string.format("%02d",cpu_now.usage))))
-            imgCpu:set_image(theme.cpu_33)
-        else
-            widget:set_markup(markup.font(theme.font, markup("#FF0000", string.format("%02d",cpu_now.usage))))
-            imgCpu:set_image(theme.cpu_66)
-        end
-    end
-})
-
-local myCpu =
-{
-    widget = wibox.container.background,
-    bg     = bar_cell_bg_color,
-    shape = round_rect_8,
-    {
-        widget = wibox.container.margin,
-
-        margins = dpi(11),
-        {
-           layout = wibox.layout.fixed.horizontal,
-           spacing = dpi(6),
-           imgCpu,
-           theme.cpu
-        }
-    },
-    buttons = awful.util.table.join(
-        awful.button({}, 1, function() -- left click
-            awful.spawn("xterm btop")
-        end),
-        awful.button({}, 3, function() -- right click
-            awful.spawn("xterm nvtop")
-        end)
-    )
-}
+--]]
 
 
 function theme.at_screen_connect(s)
+    
     -- Quake application
     --s.quake = lain.util.quake({ app = awful.util.terminal })
 
@@ -511,7 +569,7 @@ function theme.at_screen_connect(s)
         buttons = awful.util.taglist_buttons,
 
         layout = {
-            spacing = dpi(8),
+            spacing = taglist_spacing,
             layout  = wibox.layout.fixed.horizontal
         },
 
@@ -519,15 +577,16 @@ function theme.at_screen_connect(s)
 
             layout = wibox.layout.fixed.horizontal,
             widget = wibox.container.margin,
+
             {
                 id =    'background_role',
                 widget = wibox.container.background,
                 {
                     widget = wibox.container.margin,
-                    margins = dpi(8),
+                    margins = taglist_text_margins,
                     {
                         id = 'text_role',
-                        widget = wibox.widget.textbox,
+                        widget = wibox.widget.textbox
                     }
                 }
             }
@@ -546,15 +605,16 @@ function theme.at_screen_connect(s)
             id     = "background_role",
             widget = wibox.container.background,
             {
-                left  = dpi(10),
-                right = dpi(10),
                 widget = wibox.container.margin,
+                left  = tasklist_margin_left,
+                right = tasklist_margin_right,
                 {
-                    spacing = dpi(8),
+                    spacing = tasklist_inner_spacing,
                     layout = wibox.layout.fixed.horizontal,
                     {
-                        top = dpi(8), bottom = dpi(8),
-                        widget  = wibox.container.margin,
+                        widget = wibox.container.margin,
+                        top    = tasklist_icon_spacing_top,
+                        bottom = tasklist_icon_spacing_bottom,
                         {
                             id     = "icon_role",
                             widget = wibox.widget.imagebox
@@ -571,9 +631,9 @@ function theme.at_screen_connect(s)
 
     -- Create the wibox
 	 s.mywibox = awful.wibar({
-	    position = "top",
+	    position = bar_position,
         screen = s,
-        height = dpi(48),
+        height = bar_height,
     })
 
     local padding = wibox.widget.textbox('<span font="Terminus 4"> </span>')
@@ -585,10 +645,11 @@ function theme.at_screen_connect(s)
         -- BG transparent color in theme
         -- Opacity for whole bar in theme!!
         widget = wibox.container.margin,
-        top    = theme.useless_gap, --doesn't refresh
-        left   = theme.useless_gap, --doesn't refresh
-        right  = theme.useless_gap, --doesn't refresh
-        bottom = dpi(0),
+
+        top    = bar_container_margin_top, 
+        left   = bar_container_margin_left, 
+        right  = bar_container_margin_right,
+        bottom = bar_container_margin_bottom,
         {
             -- Visually-real bar
             widget = wibox.container.background,
@@ -596,15 +657,17 @@ function theme.at_screen_connect(s)
             shape  = round_rect_8,
             {
                 widget = wibox.container.margin,
-                margins = dpi(6),
-                --shape_border_width = dpi(2),
+                top    = bar_inner_margin_top, 
+                left   = bar_inner_margin_left, 
+                right  = bar_inner_margin_right,
+                bottom = bar_inner_margin_bottom,
                 {
                     layout = wibox.layout.align.horizontal,
 
                     {
                         -- LEFT WIDGETS
                         layout = wibox.layout.fixed.horizontal,
-                        spacing = dpi(6),
+                        spacing = bar_widget_spacing,
                         myMenu,
                         {
                             -- TAGLIST/LAYOUT Container
@@ -613,7 +676,7 @@ function theme.at_screen_connect(s)
                             shape  = round_rect_8,
                             {
                                 layout = wibox.layout.fixed.horizontal,
-                                spacing = dpi(6),
+                                spacing = taglist_layout_spacing,
 
                                 padding,
                                 s.mytaglist, -- TAGLIST
@@ -621,8 +684,9 @@ function theme.at_screen_connect(s)
                                 {
                                     -- LAYOUTBOX
                                     widget = wibox.container.margin,
-                                    s.mylayoutbox,
-                                    margins=dpi(8)
+                                    margins= layout_button_margins,
+
+                                    s.mylayoutbox
                                 }
 
                             }
@@ -635,11 +699,11 @@ function theme.at_screen_connect(s)
                     {
                         -- RIGHT WIDGETS
                         layout = wibox.layout.fixed.horizontal,
-                        spacing = dpi(6),
+                        spacing = bar_widget_spacing,
 
                         padding,
                         mySysTray,
-                        myKeyboard,
+                        --myKeyboard,
                         myCpu,
                         myVolume,
                         mytextclock
@@ -648,6 +712,7 @@ function theme.at_screen_connect(s)
             }
         }
     } -- wibox
+    --]]
 
 end -- theme.at_screen_connect
 

@@ -1,4 +1,6 @@
 # Fox. An AwesomeWM configuration template
+## Under Construction !!
+---
 
 Based on: https://github.com/lcpz/awesome-copycats
 
